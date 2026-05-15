@@ -70,7 +70,7 @@ def write_oasis(polygons, filepath, layer=1, datatype=0):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Create multi_L-shaped.oas with 8 randomly oriented L polygons.")
+        description="Create multi_L-shaped.oas with 16 randomly oriented L polygons.")
     parser.add_argument("--seed",   type=int,   default=42,
                         help="Random seed (default: 42)")
     parser.add_argument("--output", type=str,   default="multi_L-shaped.oas",
@@ -79,17 +79,17 @@ if __name__ == "__main__":
 
     random.seed(args.seed)
 
-    # 4 columns × 2 rows, 220 nm pitch.
+    # 4 columns × 4 rows, 220 nm pitch.
     # Offset by 150 nm so rotated L-shapes (max radius ~68 nm) stay inside
     # the simulation grid [0, 1024] nm with comfortable margin.
-    cols, rows, pitch, offset = 4, 2, 220.0, 150.0
+    cols, rows, pitch, offset = 4, 4, 220.0, 150.0
     positions = [
         (offset + c * pitch, offset + r * pitch)
         for r in range(rows)
         for c in range(cols)
-    ]  # 8 positions total
+    ]  # 16 positions total
 
-    angles = [random.uniform(0, 360) for _ in range(8)]
+    angles = [random.uniform(0, 360) for _ in range(len(positions))]
 
     print("L-shape orientations:")
     polygons = []

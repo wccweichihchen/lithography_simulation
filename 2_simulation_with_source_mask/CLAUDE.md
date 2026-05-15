@@ -40,7 +40,7 @@ Two scripts; source and mask are always **read from files**, never generated in 
 
 ### `generate_layout.py` — layout generator
 
-Creates an OASIS file with 8 L-shaped polygons (arm width=32 nm, arm length=96 nm) at random orientations on a 4×2 grid (pitch=220 nm, origin offset=150 nm). The 150 nm offset ensures rotated L-shapes (max radius ~68 nm) stay fully within the 1024×1024 nm simulation field.
+Creates an OASIS file with 16 L-shaped polygons (arm width=32 nm, arm length=96 nm) at random orientations on a 4×4 grid (pitch=220 nm, origin offset=150 nm). The 150 nm offset ensures rotated L-shapes (max radius ~68 nm) stay fully within the 1024×1024 nm simulation field.
 
 Key functions: `l_shape_vertices(w, h)` returns the 6 canonical vertices centred at origin; `rotate(pts, angle_deg)` applies a 2D rotation matrix; `translate(pts, dx, dy)` shifts to the grid position.
 
@@ -54,12 +54,12 @@ All lengths in **nm**, all spatial frequencies in **1/nm** — consistent with `
 
 ## Example output: multi_L-shaped
 
-8 L-shapes (arm width=32 nm, arm length=96 nm) at random orientations, placed on a 4×2 grid (pitch=220 nm, offset=150 nm). Simulated with λ=13.5 nm EUV, NA=0.33, annular source (σ=0.55–0.8), 256×256 grid, dx=4 nm.
+16 L-shapes (arm width=32 nm, arm length=96 nm) at random orientations, placed on a 4×4 grid (pitch=220 nm, offset=150 nm), filling the 1024×1024 nm field uniformly. Simulated with λ=13.5 nm EUV, NA=0.33, annular source (σ=0.55–0.8), 256×256 grid, dx=4 nm.
 
-**`multi_L-shaped_aerial_image.png`** — 6-panel summary showing the rasterized mask with 8 distinct L orientations and the corresponding Abbe and Hopkins aerial images. Each L appears as a diffraction-blurred spot with an asymmetric L profile. Mask transmission is ~3.9% (sparse isolated features). Abbe–Hopkins normalised RMS = 0.00054, consistent with the single L-shape case.
+**`multi_L-shaped_aerial_image.png`** — 6-panel summary showing the rasterized mask with 16 distinct L orientations and the corresponding Abbe and Hopkins aerial images. Each L appears as a diffraction-blurred spot with an asymmetric L profile. Mask transmission is ~7.8%. Abbe–Hopkins normalised RMS = 0.00097.
 
 ![](multi_L-shaped_aerial_image.png)
 
-**`multi_L-shaped_linecut.png`** — horizontal cut through the image centre (y=0 nm in simulation coordinates = y=512 nm in OAS coordinates), which falls above both rows of L-shapes (at OAS y=150 and y=370 nm). Consequently, the centre row captures only diffraction tails: normalised intensities are tiny (~0.001). The apparent 2× discrepancy between Abbe and Hopkins in the linecut reflects differences in the diffraction tail background at that level, not a simulation error — the absolute difference is ~0.05% of peak, consistent with the overall RMS.
+**`multi_L-shaped_linecut.png`** — horizontal cut through the image centre (y=0 nm simulation = y=512 nm OAS), which falls midway between the two nearest L-shape rows (at OAS y=370 and y=590 nm). The cut captures diffraction tails from those rows: two broad peaks appear near x≈−150 nm and x≈+100 nm (corresponding to the two central columns), with smaller side lobes from the outer columns. Normalised intensities remain small (~0.015) since no L-shape is centred on this row. Abbe and Hopkins agree well in shape; the small amplitude offset reflects the limited 30-term SVD at low absolute intensities.
 
 ![](multi_L-shaped_linecut.png)
