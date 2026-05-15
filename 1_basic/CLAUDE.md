@@ -30,6 +30,43 @@ The entire simulation lives in `aerial_image_sim.py`, structured as a pipeline o
 
 7. **Outputs** — per-pattern PNG aerial images and linecut plots, `.oas` mask files (OASIS via gdstk), and `source_distribution.csv` (sparse source point export).
 
+## Generated figures
+
+Each pattern produces two PNG files. All simulations use λ=13.5 nm (EUV), NA=0.33, annular source (σ_inner=0.55, σ_outer=0.8), 256×256 grid, dx=4 nm, and Zernike coma (n=3, m=1)=0.02 waves.
+
+### `aerial_image_<pattern>.png` — 6-panel summary
+
+| Panel | Content |
+|-------|---------|
+| Mask | Binary chrome/clear layout in spatial coordinates [nm] |
+| Source | Annular ring in normalised pupil coords (log scale); inner/outer radii at σ=0.55/0.8 |
+| \|Pupil\| | Uniform circular disk (amplitude=1 inside NA, 0 outside) |
+| Pupil phase | Near-uniform ~0 rad (cyan) with a faint vertical gradient from the Zernike coma term |
+| Aerial Image – Abbe | Intensity map from direct incoherent source sum |
+| Aerial Image – Hopkins | Intensity map from SVD-truncated TCC (30 terms); visually identical to Abbe |
+
+### `aerial_linecut_<pattern>.png` — centre-row linecut
+
+Horizontal slice through the image centre, normalised to peak intensity. Abbe (orange solid) and Hopkins (cyan dashed) are overlaid to show agreement.
+
+### Per-pattern observations
+
+**`lines`** (cd=32 nm, pitch=64 nm, transmission=0.50)
+- Clear periodic vertical fringes; intensity swings from ~0.03 to ~0.73, giving good image contrast.
+- Linecut shows full-swing sinusoidal oscillation; Abbe–Hopkins RMS = 0.00267.
+
+**`contact`** (cd=32 nm, pitch=64 nm, transmission=0.25)
+- 2D array of rounded bright spots; peak intensity ~0.60 — lower than lines because energy is spread across both spatial-frequency axes simultaneously.
+- Linecut peaks at ~0.5 with near-zero background.
+
+**`checkerboard`** (cd=32 nm, pitch=64 nm, transmission=0.50)
+- Alternating squares produce a raised background floor (~0.29 normalised) due to the strong 2D frequency content of the pattern.
+- Linecut shows a double-peaked waveform per period (peaks ~0.50) reflecting the 2D crossing structure; largest Abbe–Hopkins RMS (0.00384).
+
+**`L-shaped`** (cd=32 nm, transmission=0.005)
+- Single isolated L centred in the field; inner corner is visibly rounded by diffraction; vertical arm slightly brighter than horizontal in the centre-row cut.
+- Linecut shows a single narrow peak (~60 nm FWHM) offset slightly left of centre, where the cut intersects the vertical arm; Abbe–Hopkins RMS = 0.00010 (lowest, because the isolated feature has predominantly low spatial-frequency content).
+
 ## Key conventions
 
 - The fftshift/ifftshift pair wraps every FFT/IFFT call; the pupil and source are stored in shifted (DC-centered) form.
