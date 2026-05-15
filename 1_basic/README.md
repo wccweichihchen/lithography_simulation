@@ -55,17 +55,29 @@ Horizontal slice through the image centre, normalised to peak intensity. Abbe (o
 - Clear periodic vertical fringes; intensity swings from ~0.03 to ~0.73, giving good image contrast.
 - Linecut shows full-swing sinusoidal oscillation; Abbe–Hopkins RMS = 0.00267.
 
+![](aerial_image_lines.png)
+![](aerial_linecut_lines.png)
+
 **`contact`** (cd=32 nm, pitch=64 nm, transmission=0.25)
 - 2D array of rounded bright spots; peak intensity ~0.60 — lower than lines because energy is spread across both spatial-frequency axes simultaneously.
 - Linecut peaks at ~0.5 with near-zero background.
+
+![](aerial_image_contact.png)
+![](aerial_linecut_contact.png)
 
 **`checkerboard`** (cd=32 nm, pitch=64 nm, transmission=0.50)
 - Alternating squares produce a raised background floor (~0.29 normalised) due to the strong 2D frequency content of the pattern.
 - Linecut shows a double-peaked waveform per period (peaks ~0.50) reflecting the 2D crossing structure; largest Abbe–Hopkins RMS (0.00384).
 
+![](aerial_image_checkerboard.png)
+![](aerial_linecut_checkerboard.png)
+
 **`L-shaped`** (cd=32 nm, transmission=0.005)
 - Single isolated L centred in the field; inner corner is visibly rounded by diffraction; vertical arm slightly brighter than horizontal in the centre-row cut.
 - Linecut shows a single narrow peak (~60 nm FWHM) offset slightly left of centre, where the cut intersects the vertical arm; Abbe–Hopkins RMS = 0.00010 (lowest, because the isolated feature has predominantly low spatial-frequency content).
+
+![](aerial_image_L-shaped.png)
+![](aerial_linecut_L-shaped.png)
 
 ## Key conventions
 
