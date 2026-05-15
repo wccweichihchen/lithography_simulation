@@ -181,17 +181,27 @@ def read_mask_oas(filepath, sys):
     dx = sys.dx
     mask = np.zeros((N, N), dtype=float)
 
+    from matplotlib.path import Path as MplPath
+
     for poly in cell.polygons:
-        pts = poly.points
-        x0  = pts[:, 0].min()
-        x1  = pts[:, 0].max()
-        y0  = pts[:, 1].min()
-        y1  = pts[:, 1].max()
-        c0  = max(0, int(round(x0 / dx)))
-        c1  = min(N, int(round(x1 / dx)))
-        r0  = max(0, int(round(y0 / dx)))
-        r1  = min(N, int(round(y1 / dx)))
-        mask[r0:r1, c0:c1] = 1.0
+        pts = poly.points                          # (M, 2) polygon vertices
+        x0, x1 = pts[:, 0].min(), pts[:, 0].max()
+        y0, y1 = pts[:, 1].min(), pts[:, 1].max()
+
+        # Restrict rasterization to the polygon's bounding box
+        c0 = max(0, int(x0 / dx))
+        c1 = min(N, int(x1 / dx) + 2)
+        r0 = max(0, int(y0 / dx))
+        r1 = min(N, int(y1 / dx) + 2)
+
+        # Pixel centres in OAS coordinates for the bounding-box region
+        col_ctrs = (np.arange(c0, c1) + 0.5) * dx
+        row_ctrs = (np.arange(r0, r1) + 0.5) * dx
+        CC, RR   = np.meshgrid(col_ctrs, row_ctrs)
+        inside   = MplPath(pts).contains_points(
+                       np.column_stack([CC.ravel(), RR.ravel()])
+                   ).reshape(r1 - r0, c1 - c0)
+        mask[r0:r1, c0:c1][inside] = 1.0
 
     return mask
 
