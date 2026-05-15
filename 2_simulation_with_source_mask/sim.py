@@ -348,13 +348,18 @@ def plot_results(sys, mask, source, pupil, AI_abbe, AI_hop,
     plt.close()
 
 
-def plot_linecuts(AI_abbe, AI_hop, sys, output_prefix):
-    N  = sys.N
-    cx = N // 2
-    x  = (np.arange(N) - cx) * sys.dx
+def plot_linecuts(AI_abbe, AI_hop, sys, output_prefix, y_nm=0.0):
+    N   = sys.N
+    cx  = N // 2
+    x   = (np.arange(N) - cx) * sys.dx
 
-    a_cut = AI_abbe[cx, :] / AI_abbe.max()
-    h_cut = AI_hop [cx, :] / AI_hop.max()
+    # Row index for the requested y position
+    row = int(round(y_nm / sys.dx)) + cx
+    row = max(0, min(N - 1, row))
+    actual_y = (row - cx) * sys.dx
+
+    a_cut = AI_abbe[row, :] / AI_abbe.max()
+    h_cut = AI_hop [row, :] / AI_hop.max()
 
     fig, ax = plt.subplots(figsize=(9, 4))
     fig.patch.set_facecolor('#0f0f1a')
@@ -363,7 +368,7 @@ def plot_linecuts(AI_abbe, AI_hop, sys, output_prefix):
     ax.plot(x, h_cut, color='#4ecdc4', lw=2, ls='--', label='Hopkins')
     ax.set_xlabel('x [nm]', color='#aaa')
     ax.set_ylabel('Normalised intensity', color='#aaa')
-    ax.set_title('Line-cut (centre row)', color='white', fontsize=11)
+    ax.set_title(f'Line-cut  y = {actual_y:.0f} nm', color='white', fontsize=11)
     ax.legend(facecolor='#1a1a2e', labelcolor='white')
     ax.tick_params(colors='#aaa')
     for sp in ax.spines.values(): sp.set_color('#444')
@@ -372,7 +377,7 @@ def plot_linecuts(AI_abbe, AI_hop, sys, output_prefix):
     plt.tight_layout()
     fname = f'{output_prefix}_linecut.png'
     plt.savefig(fname, dpi=150, bbox_inches='tight', facecolor='#0f0f1a')
-    print(f"  Saved: {fname}")
+    print(f"  Saved: {fname}  (y = {actual_y:.0f} nm)")
     plt.close()
 
 
@@ -387,9 +392,11 @@ if __name__ == "__main__":
                         help='Path to source distribution CSV')
     parser.add_argument('--mask',   required=True,
                         help='Path to mask OASIS (.oas) file')
-    parser.add_argument('--n_svd',  type=int, default=30,
+    parser.add_argument('--n_svd',    type=int,   default=30,
                         help='Hopkins SVD truncation (default: 30)')
-    parser.add_argument('--output', default=None,
+    parser.add_argument('--linecut_y', type=float, default=0.0,
+                        help='Y position [nm] for the linecut (default: 0 = centre row)')
+    parser.add_argument('--output',   default=None,
                         help='Output filename prefix (default: mask basename)')
     args = parser.parse_args()
 
@@ -430,6 +437,7 @@ if __name__ == "__main__":
     print("\nPlotting...")
     plot_results(sys, mask, source, pupil, AI_abbe, AI_hop,
                  X, Y, FX, FY, output_prefix=args.output)
-    plot_linecuts(AI_abbe, AI_hop, sys, output_prefix=args.output)
+    plot_linecuts(AI_abbe, AI_hop, sys, output_prefix=args.output,
+                  y_nm=args.linecut_y)
 
     print("\nDone.")

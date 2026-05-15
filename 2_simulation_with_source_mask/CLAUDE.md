@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Run aerial image simulation:**
 ```bash
-python sim.py --source <source.csv> --mask <mask.oas> [--n_svd 30] [--output PREFIX]
+python sim.py --source <source.csv> --mask <mask.oas> [--n_svd 30] [--linecut_y Y_NM] [--output PREFIX]
 ```
 
 **Generate a custom layout:**
@@ -17,7 +17,7 @@ python generate_layout.py [--seed SEED] [--output PATH]
 **End-to-end example using the bundled source and generated layout:**
 ```bash
 python generate_layout.py --output multi_L-shaped.oas
-python sim.py --source source_distribution.csv --mask multi_L-shaped.oas --output multi_L-shaped
+python sim.py --source source_distribution.csv --mask multi_L-shaped.oas --output multi_L-shaped --linecut_y 100
 ```
 
 Requires: `numpy`, `matplotlib`, `gdstk` (`pip install gdstk`).
@@ -36,7 +36,7 @@ Two scripts; source and mask are always **read from files**, never generated in 
 
 4. **`abbe_simulation` / `hopkins_simulation`** — identical to `1_basic`. `--n_svd` controls Hopkins SVD truncation (default 30).
 
-5. **Plotting** — `plot_results` (6-panel summary) and `plot_linecuts` (centre-row linecut), saved as `<PREFIX>_aerial_image.png` and `<PREFIX>_linecut.png`.
+5. **Plotting** — `plot_results` (6-panel summary) and `plot_linecuts` (horizontal linecut at a configurable y position), saved as `<PREFIX>_aerial_image.png` and `<PREFIX>_linecut.png`. `plot_linecuts` accepts `y_nm` (default 0 = centre row); the nearest grid row is selected and the actual y is shown in the plot title.
 
 ### `generate_layout.py` — layout generator
 
@@ -60,6 +60,6 @@ All lengths in **nm**, all spatial frequencies in **1/nm** — consistent with `
 
 ![](multi_L-shaped_aerial_image.png)
 
-**`multi_L-shaped_linecut.png`** — horizontal cut through the image centre (y=0 nm simulation = y=512 nm OAS), which falls midway between the two nearest L-shape rows (at OAS y=370 and y=590 nm). The cut captures diffraction tails from those rows: two broad peaks appear near x≈−150 nm and x≈+100 nm (corresponding to the two central columns), with smaller side lobes from the outer columns. Normalised intensities remain small (~0.015) since no L-shape is centred on this row. Abbe and Hopkins agree well in shape; the small amplitude offset reflects the limited 30-term SVD at low absolute intensities.
+**`multi_L-shaped_linecut.png`** — horizontal cut at y=100 nm, which passes through row 3 of L-shapes (centred at y≈78 nm OAS, just 22 nm below the cut). Four well-separated intensity peaks appear at x≈−362, −142, +78, +298 nm, corresponding to the 4 columns. Peak heights vary (0.8–1.0 normalised) because each L has a different orientation — orientations that expose more chrome along this row produce taller peaks. The rightmost peak shows a shoulder/double structure from an L whose both arms contribute at this y position. Abbe and Hopkins are nearly indistinguishable throughout.
 
 ![](multi_L-shaped_linecut.png)
